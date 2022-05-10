@@ -5,8 +5,6 @@ from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 from geopy import distance
 
-API_KEY = "AIzaSyAzboXO3ZMju2Txx4owH64X8l6B8PqVRRA"
-
 # Function to check for empty input fields
 def empty_fields(user_info):
 	if "" in user_info or None in user_info:
