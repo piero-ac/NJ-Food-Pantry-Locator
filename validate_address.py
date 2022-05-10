@@ -1,5 +1,5 @@
 # Module containg functions for validating the entered address
-from pygeocode import Geocoder
+from pygeocoder import Geocoder
 
 # Function to check for empty input fields
 def empty_fields(user_info):
