@@ -8,62 +8,56 @@ from bs4 import BeautifulSoup
 import urllib.request
 import re
 import json
-from validate_address import get_coordinates
+from address import get_coordinates
 
 
 
 # Step 1. Access the food pantry website
 
-# food_pantry_website = urllib.request.urlopen("https://www.foodpantries.org/st/new_jersey")
-# fp_soup = BeautifulSoup(food_pantry_website, "html.parser")
+food_pantry_website = urllib.request.urlopen("https://www.foodpantries.org/st/new_jersey")
+fp_soup = BeautifulSoup(food_pantry_website, "html.parser")
 
 # Step 2. Get the links from the anchor elements in the page
 # But only those that point to New Jersey cities 
 # and save to a text file for further use
 
-# city_links_file = open("city_links.txt", "w")
-# city_link_substring = "https://www.foodpantries.org/ci/nj-"
-# for a in fp_soup.findAll('a'):
-	# link = a.get('href') # Get the href value (link) of the anchor element
-	# if city_link_substring in link:
-		# city_links_file.write(f"{link}\n") # Write the link to file
-# city_links_file.close() # Close the file
+city_links_file = open("city_links.txt", "w")
+city_link_substring = "https://www.foodpantries.org/ci/nj-"
+for a in fp_soup.findAll('a'):
+	link = a.get('href') # Get the href value (link) of the anchor element
+	if city_link_substring in link:
+		city_links_file.write(f"{link}\n") # Write the link to file
+city_links_file.close() # Close the file
 
 # Step 3. Attain all of the links for the food pantries in New Jersey
 
-# food_pantry_links = open('fp_links.txt', 'w')
-# fp_link_substring = "https://www.foodpantries.org/li/"
-# fp_links_file = open("fp_links.txt", "w")
+food_pantry_links = open('fp_links.txt', 'w')
+fp_link_substring = "https://www.foodpantries.org/li/"
+fp_links_file = open("fp_links.txt", "w")
 
 # Open the file and read the links 
-# with open("city_links.txt", "r") as f:
-# 	attained_links = [] # list to store attained links
+with open("city_links.txt", "r") as f:
+	attained_links = [] # list to store attained links
 
-# 	for link in f:
-# 		if link != "":
-# 			link = link.strip() # Remove whitespaces from link
-# 			city_name = link[34:] # Get the city name from the link
+	for link in f:
+		if link != "":
+			link = link.strip() # Remove whitespaces from link
+			city_name = link[34:] # Get the city name from the link
 
-# 			# Access the city's website of food pantries
-# 			city_fp_website = urllib.request.urlopen(link)
-# 			city_fp_soup = BeautifulSoup(city_fp_website, "html.parser")
+			# Access the city's website of food pantries
+			city_fp_website = urllib.request.urlopen(link)
+			city_fp_soup = BeautifulSoup(city_fp_website, "html.parser")
 
-# 			# Traverse the anchor elements in the link
-# 			for a in city_fp_soup.findAll('a'):
-# 				fp_link = a.get('href') # Get the href value (link) of the anchor element
+			# Traverse the anchor elements in the link
+			for a in city_fp_soup.findAll('a'):
+				fp_link = a.get('href') # Get the href value (link) of the anchor element
 
-# 				if (fp_link_substring in fp_link) and (fp_link not in attained_links):
-# 					print("attained: ", fp_link)
-# 					fp_links_file.write(f"{fp_link}\n") # Write the link to file
-# 					attained_links.append(fp_link) # To prevent having repeated links in the text file
+				if (fp_link_substring in fp_link) and (fp_link not in attained_links):
+					print("attained: ", fp_link)
+					fp_links_file.write(f"{fp_link}\n") # Write the link to file
+					attained_links.append(fp_link) # To prevent having repeated links in the text file
 
-# fp_links_file.close()
-
-"""
-Summary of Steps 1-3: Steps 1-3 allowed me to obtain the individual links 
-for the food pantries in New Jersey and create text files to avoid overloading
-the website with requests every time the app would run
-"""
+fp_links_file.close()
 
 """
 Step 4. Get the food pantry locations from each city and create a dictionary
@@ -84,7 +78,8 @@ Then, convert the created the dictionary into a JSON file for use in the GUI App
 """
 # Function to extract Food Pantry's name, address, and telephone
 # Returns a list with the city, food pantry's name, and
-# dictionary containing the food pantry's telephone, address, and link
+# dictionary containing the food pantry's telephone, address, and link 
+
 def getInfoFromScriptTag(link_JSON, link):
 	JSON = json.loads(link_JSON.string) # Get the script's JSON
 	name = JSON["name"]
@@ -109,6 +104,7 @@ def getInfoFromScriptTag(link_JSON, link):
 
 # Helper function to attain address from JSON
 # Returns the city name, the compiled address, and state
+
 def getAddressFromScriptTag(JSON):
 	street = JSON["address"]["streetAddress"]
 	city = JSON["address"]["addressLocality"]
@@ -120,6 +116,7 @@ def getAddressFromScriptTag(JSON):
 
 
 NJ_FP_locations = {}
+
 # Open the file and read the links 
 with open("fp_links.txt", "r") as f:
 
@@ -169,54 +166,42 @@ with open("fp_links.txt", "r") as f:
 					NJ_FP_locations[city][fp_name] = details
 			print(f"Analyzed: {link}\n")
 
-# Create the JSON File
+# Convert the dictionary to a JSON file
 with open("NJ_FP_locations.json", "w") as f:
 	json.dump(NJ_FP_locations, f)
 
 
-# Summary of Step 4: I was able to attain a JSON file that contains entries for each city 
-# in NJ that has a food pantry and within each city entry, the food pantries within each city.
 """
+Summary of Steps 1-3: Steps 1-3 allowed me to obtain the individual links 
+for the food pantries in New Jersey and create text files to avoid overloading
+the website with requests every time the app would run
+
+Summary of Step 4: I was able to obtain a JSON file that contains entries for each city 
+in NJ that has a food pantry and within each city entry, the food pantries within that city.
+
 For example, for Aberdeen the JSON file has the following entry:
 "Aberdeen": {
 		"Matawan United Methodist Pantry": {
 			"telephone": "(732) 566-2996",
-			"address": "478 Atlantic Av, Aberdeen, NJ, 07747",
-			"link": "https://www.foodpantries.org/li/nj_07747_matawan-united-methodist-pantry"
+			"full_address": "478 Atlantic Av, Aberdeen, NJ, 07747",
+			"street": "478 Atlantic Av",
+			"city": "Aberdeen",
+			"state": "NJ",
+			"postal_code": "07747",
+			"link": "https://www.foodpantries.org/li/nj_07747_matawan-united-methodist-pantry",
+			"latitude": 40.408568,
+			"longitude": -74.224138
 		},
 		"St. Joseph Church Pantry": {
 			"telephone": "(732) 290-1878",
-			"address": "42 Wooley Street, Aberdeen, NJ, 07747",
-			"link": "https://www.foodpantries.org/li/nj_st-joseph-church-pantry"
+			"full_address": "42 Wooley Street, Aberdeen, NJ, 07747",
+			"street": "42 Wooley Street",
+			"city": "Aberdeen",
+			"state": "NJ",
+			"postal_code": "07747",
+			"link": "https://www.foodpantries.org/li/nj_st-joseph-church-pantry",
+			"latitude": 40.423378421262356,
+			"longitude": -74.2135786873091
 		}
+	}
 """ 
-
-
-# Step 5: Add the latitude and longitude values for food pantry entry in the JSON file
-# f = open('food_pantries.json')
-
-# data = json.load(f)
-
-# for city in data:
-
-# 	# Get the keys (food pantry name)
-# 	fpList = data[city].keys() 
-
-# 	for key in fpList:
-# 		# Store the dictionary for the food pantry
-# 		fp_info = data[city][key]
-
-# 		# Save the current food pantry's name, address, and telephone
-# 		name = key
-# 		address = fp_info["address"]
-# 		telephone = fp_info["telephone"]
-# 		link = fp_info["link"]
-
-# 		print("Analyzing: ", link)
-
-# 		# Add a coords key to store the geolocation of each food pantry
-# 		lat, lon = get_coordinates(address)
-# 		print(lat, lon)
-
-# json.dump(data, "food_pantries_coords.json")
-# f.close()
