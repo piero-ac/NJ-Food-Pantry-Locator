@@ -1,5 +1,11 @@
 # Module containg functions for validating the entered address
 from pygeocoder import Geocoder
+import geopy
+from geopy.geocoders import Nominatim
+from geopy.extra.rate_limiter import RateLimiter
+from geopy import distance
+
+API_KEY = "AIzaSyAzboXO3ZMju2Txx4owH64X8l6B8PqVRRA"
 
 # Function to check for empty input fields
 def empty_fields(user_info):
@@ -19,9 +25,13 @@ def validate(address):
 	# return False
 
 # Function to get the coordinates for an address
-# Returns a tuple containing (latitude, longitude)
+# Returns the latitude and longitude
 def get_coordinates(address):
-	coords = Geocoder.geocode(address).coordinates
-	return coords
+	loc = Nominatim(user_agent="GetLoc")
+	get_loc = loc.geocode(address)
+	
+	return get_loc.latitude, get_loc.longitude
 
+# coords = get_coordinates("Hackettstown, NJ 07840")
 
+# print(coords)
