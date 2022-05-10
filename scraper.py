@@ -8,6 +8,9 @@ from bs4 import BeautifulSoup
 import urllib.request
 import re
 import json
+from validate_address import get_coordinates
+
+
 
 # Step 1. Access the food pantry website
 
@@ -86,7 +89,7 @@ def getInfoFromScriptTag(link_JSON, link):
 	JSON = json.loads(link_JSON.string) # Get the script's JSON
 	name = JSON["name"]
 	telephone = JSON["telephone"]
-	city, address, state = getAddressFromScriptTag(JSON)
+	full_address, street, city, state, postal_code = getAddressFromScriptTag(JSON)
 
 	# Use the state variable to check whether the food pantry
 	# is located in NJ
@@ -94,7 +97,15 @@ def getInfoFromScriptTag(link_JSON, link):
 		return False # Do not add to dictionary for city
 	else:
 		# Return a list with the city name and dictionary containing fp's info
-		return [city, name, { "telephone" : telephone, "address" : address, "link" : link }] 
+		return [city,
+			 	name, { 
+			 	"telephone" : telephone, 
+			 	"full_address" : full_address,
+			 	"street" : street,
+			 	"city" : city,
+			 	"state" : state,
+			 	"postal_code" : postal_code,
+			 	"link" : link}] 
 
 # Helper function to attain address from JSON
 # Returns the city name, the compiled address, and state
@@ -103,8 +114,10 @@ def getAddressFromScriptTag(JSON):
 	city = JSON["address"]["addressLocality"]
 	state = JSON["address"]["addressRegion"]
 	postal_code = JSON["address"]["postalCode"]
-	address = f"{street}, {city}, {state}, {postal_code}"
-	return city, address, state
+	full_address = f"{street}, {city}, {state}, {postal_code}"
+	return full_address, street, city, state, postal_code
+
+
 
 NJ_FP_locations = {}
 # Open the file and read the links 
@@ -130,9 +143,22 @@ with open("fp_links.txt", "r") as f:
 				continue # Move on to the next link
 
 			if fp_info:
-				city = fp_info[0] #
+				city = fp_info[0]
 				fp_name = fp_info[1]
 				details = fp_info[2]
+
+				try:
+					lat,lon = get_coordinates(details["full_address"])
+				except AttributeError:
+					try:
+						short_address = f'{details["city"]}, {details["state"]}, {details["postal_code"]}'
+						lat,lon = get_coordinates(short_address)
+					except AttributeError:
+						continue # If short address throws error, then don't add food pantry to json
+
+				# Create keys for the latitude and longitude
+				details["latitude"] = lat
+				details["longitude"] = lon
 
 				# Check if city is not a key in the dictionary
 				if city not in NJ_FP_locations:
@@ -144,7 +170,7 @@ with open("fp_links.txt", "r") as f:
 			print(f"Analyzed: {link}\n")
 
 # Create the JSON File
-with open("food_pantries.json", "w") as f:
+with open("NJ_FP_locations.json", "w") as f:
 	json.dump(NJ_FP_locations, f)
 
 
@@ -166,11 +192,31 @@ For example, for Aberdeen the JSON file has the following entry:
 """ 
 
 
+# Step 5: Add the latitude and longitude values for food pantry entry in the JSON file
+# f = open('food_pantries.json')
 
+# data = json.load(f)
 
+# for city in data:
 
+# 	# Get the keys (food pantry name)
+# 	fpList = data[city].keys() 
 
+# 	for key in fpList:
+# 		# Store the dictionary for the food pantry
+# 		fp_info = data[city][key]
 
+# 		# Save the current food pantry's name, address, and telephone
+# 		name = key
+# 		address = fp_info["address"]
+# 		telephone = fp_info["telephone"]
+# 		link = fp_info["link"]
 
+# 		print("Analyzing: ", link)
 
+# 		# Add a coords key to store the geolocation of each food pantry
+# 		lat, lon = get_coordinates(address)
+# 		print(lat, lon)
 
+# json.dump(data, "food_pantries_coords.json")
+# f.close()
