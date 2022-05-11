@@ -36,8 +36,10 @@ def validate_city(city):
 	# List to hold cities
 	cities = []
 	with open("cities.txt", "r") as f:
-		city = f.readline().strip()
-		cities.append(city)
+		cities = f.readlines()
+
+	# Remove newline char for every entry
+	cities = [x.strip() for x in cities]
 
 	if city in cities:
 		return city
