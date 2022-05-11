@@ -4,7 +4,6 @@ import geocoder
 from geopy.geocoders import Nominatim
 import re
 
-
 # Function to check for a valid address
 # Returns false if no result could be found
 def validate(address):
@@ -26,5 +25,3 @@ def validate_ZIPCODE(postal_code):
 		return postal_code
 	else:
 		return "Invalid"
-
-
