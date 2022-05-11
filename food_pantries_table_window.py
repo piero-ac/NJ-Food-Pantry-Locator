@@ -87,7 +87,7 @@ def create(user_lat, user_lon, search_range):
 			header_font='Calibri 20 bold',
 			font='Calibri 15',
 			alternating_row_color='#D2B48C',
-			tooltip='Food pantry locations near you',
+			tooltip='Click on food pantry to open website',
 			enable_events=table_clickable)]
 	]
 
