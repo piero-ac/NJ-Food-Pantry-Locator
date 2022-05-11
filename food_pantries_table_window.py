@@ -1,7 +1,6 @@
 # File for creating the Table of Food Pantries
 import json
 import PySimpleGUI as sg
-import address as addr
 import haversine as hs
 from haversine import Unit
 from operator import itemgetter
