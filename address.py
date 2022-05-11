@@ -20,7 +20,7 @@ def get_coordinates(address):
 
 # Function to see if ZIP satisfies one of the following formats:
 # 1) 12345   2) 12345-6789  3) 12345 1234
-def validate_ZIP(postal_code):
+def validate_ZIPCODE(postal_code):
 	zipcode = re.compile("^\d{5}(?:[-\s]\d{4})?$")
 	if zipcode.match(postal_code):
 		return postal_code
