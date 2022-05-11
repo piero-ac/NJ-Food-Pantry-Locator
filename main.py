@@ -7,8 +7,6 @@ import address as addr
 # Set the theme
 sg.theme('Light Brown 8')
 
-headings = ['NAME', 'ADDRESS', 'PHONE NUMBER', 'DISTANCE (MILES)']
-
 # Function to create layouts for search options
 def create_search_layout(text, sub_text, input_key, input_width, button_key):
 	layout = [
@@ -94,7 +92,7 @@ while True:
 		user_lat, user_lon = addr.get_coordinates("NJ " + zip_info)
 
 		# Create window of food pantries within search range
-		food_pantries_table_window.create(user_lat, user_lon, headings, search_range)
+		food_pantries_table_window.create(user_lat, user_lon, search_range)
 
 	# Event: user clicks Search button 
 	# elif event ==  '-SEARCH-':
