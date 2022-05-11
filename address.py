@@ -3,12 +3,7 @@ import geopy
 import geocoder
 from geopy.geocoders import Nominatim
 import re
-
-# Function to check for a valid address
-# Returns false if no result could be found
-def validate(address):
-	valid = geocoder.google(address, key="AIzaSyAzboXO3ZMju2Txx4owH64X8l6B8PqVRRA")
-	return valid.ok
+from operator import itemgetter
 
 # Function to get the coordinates for an address
 # Returns the latitude and longitude
@@ -44,10 +39,7 @@ def validate_city(city):
 	# Turn the cities into lowercase
 	cities = [x.lower() for x in cities]
 
-
 	if city in cities:
 		return city
 	else:
 		return "Invalid"
-
-
