@@ -25,3 +25,23 @@ def validate_ZIPCODE(postal_code):
 		return postal_code
 	else:
 		return "Invalid"
+
+# Function to see if city exists in NJ
+def validate_city(city):
+	# add the state to ensure, 
+	# returned coordinates is for city in NJ
+	if "NJ" not in city:
+		city += ", NJ"
+
+	# List to hold cities
+	cities = []
+	with open("cities.txt", "r") as f:
+		city = f.readline().strip()
+		cities.append(city)
+
+	if city in cities:
+		return city
+	else:
+		return "Invalid"
+
+
