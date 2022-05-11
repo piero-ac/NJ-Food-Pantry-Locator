@@ -52,9 +52,13 @@ def build_table(user_lat, user_lon, search_range):
 
 
 
-def create(user_lat, user_lon, headings, search_range):
+def create(user_lat, user_lon, search_range):
+	# Headings for Table
+	headings = ['NAME', 'ADDRESS', 'PHONE NUMBER', 'DISTANCE (MILES)']
+
+	# List holding food pantry locations
 	locations = build_table(user_lat, user_lon, search_range)
-	num_of_results = len(locations)
+	num_of_results = len(locations) # Number of locations near user
 
 	food_pantries_table_window_layout = [
 		[sg.Text(f"Search Resulted in {num_of_results} Food Pantry Locations", font="Calibri 25 bold")],
