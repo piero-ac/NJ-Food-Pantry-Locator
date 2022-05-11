@@ -31,7 +31,7 @@ def error_popup(message):
 	sg.Popup(message, font="Calibri 20 bold", text_color="red")
 
 # Layouts for Search Options
-search_by_city_layout = create_search_layout('Search by City', "(Only Places in NJ)", '-CITY-', 30, '-SEARCH_CITY-')
+search_by_city_layout = create_search_layout('Search by City', "Only Places in NJ", '-CITY-', 30, '-SEARCH_CITY-')
 search_by_zipcode_layout =create_search_layout('Search by ZIP', "12345 or 12345-6789 or 12345 1234", '-ZIP-', 15, '-SEARCH_ZIP-')
 
 # Layout for Search Range Selection
@@ -63,7 +63,20 @@ while True:
 
 		if not city_info:
 			error_popup("CITY FIELD EMPTY")
-			continue
+			continue # Halt search and make user try again
+
+		# validate city
+		city_info = addr.validate_city(city_info)
+
+		if city_info == "Invalid":
+			error_popup("INVALID CITY\nEnsure you entered a valid city")
+			continue # Halt search and make user try again
+
+		# get the coordinates for the city
+		user_lat, user_lon = addr.get_coordinates(city_info)
+
+		# Create window of food pantries within search range
+		food_pantries_table_window.create(user_lat, user_lon, search_range)
 
 	# Event: user searches by zip
 	elif event == '-SEARCH_ZIP-':
@@ -72,13 +85,14 @@ while True:
 
 		if not zip_info:
 			error_popup("ZIP FIELD EMPTY")
-			continue
+			continue # Halt search and make user try again
 
 		# validate zipcode 
 		zip_info = addr.validate_ZIPCODE(zip_info)
 
 		if zip_info == "Invalid":
 			error_popup("INVALID ZIPCODE")
+			continue # Halt search and make user try again
 
 		# get the coordinates for the ZIPCODE (latitude, longitude)
 		user_lat, user_lon = addr.get_coordinates("NJ " + zip_info)
