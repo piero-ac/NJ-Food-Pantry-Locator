@@ -4,10 +4,12 @@ import PySimpleGUI as sg
 import haversine as hs
 from haversine import Unit
 from operator import itemgetter
+import webbrowser
 
 # Function to traverse the JSON file and determine locations near the user's address
 def build_table(user_lat, user_lon, search_range):
 	locations_within_range = [] # List for food pantry locations within range
+	links_for_locations = [] # List for food pantries' website link
 
 	# Obtain the user's coordinates
 	user_coords = (user_lat, user_lon) 
@@ -41,6 +43,7 @@ def build_table(user_lat, user_lon, search_range):
 			# If distance from each other within range, then append to list
 			if distance <= search_range:
 				locations_within_range.append([name, address, telephone, round(distance, 2)])
+				links_for_locations.append([link,round(distance, 2)])
 
 	# Close the file
 	f.close()
@@ -48,12 +51,13 @@ def build_table(user_lat, user_lon, search_range):
 	# Sort by nearest locations 
 	try:
 		locations_within_range = sorted(locations_within_range, key=itemgetter(3))
+		links_for_locations = sorted(links_for_locations, key=itemgetter(1))
 	except IndexError: 
 		# IndexError thrown if no locations were added
 		# This means the city/zipcode entered does not have any food pantry
 		# locations within the selected range
-		return [] 
-	return locations_within_range
+		return [], []
+	return locations_within_range, links_for_locations
 
 
 # Function for creating the window displaying the table of results
@@ -62,12 +66,15 @@ def create(user_lat, user_lon, search_range):
 	headings = ['NAME', 'ADDRESS', 'PHONE NUMBER', 'DISTANCE (MILES)']
 
 	# List holding food pantry locations
-	locations = build_table(user_lat, user_lon, search_range)
+	locations, links = build_table(user_lat, user_lon, search_range)
 	num_of_results = len(locations) # Number of locations near user
-	
-	# If locations is empty, then show empty yable
+	table_clickable = True # Table can cause event
+
+	# If locations is empty, then show empty table
+	# and prevent table from causing event
 	if len(locations) == 0:
 		locations = [["N/A", "N/A", "N/A", "N/A"]]
+		table_clickable= False
 
 	food_pantries_table_window_layout = [
 		[sg.Text(f"Search Resulted in {num_of_results} Food Pantry Locations", font="Calibri 25 bold")],
@@ -80,7 +87,8 @@ def create(user_lat, user_lon, search_range):
 			header_font='Calibri 20 bold',
 			font='Calibri 15',
 			alternating_row_color='#D2B48C',
-			tooltip='Food pantry locations near you')]
+			tooltip='Food pantry locations near you',
+			enable_events=table_clickable)]
 	]
 
 	food_pantries_window = sg.Window('Food Pantry Locations Window',
@@ -88,8 +96,18 @@ def create(user_lat, user_lon, search_range):
 
 	while True:
 		event, values = food_pantries_window.read()
+
+		# Event: user exits the table window
 		if event == "Exit" or event == sg.WIN_CLOSED:
 			break
+
+		# Event: user clicks on row to open link
+		elif event == "-TABLE-":
+			# Get the row that was clicked
+			row_clicked = values["-TABLE-"][0]
+			food_pantry_link = links[row_clicked][0] # link is in the first index
+			webbrowser.open(food_pantry_link) # open the link user webbrowser library
+			continue
 
 	food_pantries_window.close()
 
