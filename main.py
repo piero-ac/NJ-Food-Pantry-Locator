@@ -52,7 +52,7 @@ window = sg.Window('FOOD PANTRY LOCATOR', layout, element_justification='center'
 while True:
 	event, values = window.read()
 
-	# Event: user closes window or click cancel
+	# Event: user closes window
 	if event == sg.WIN_CLOSED: 
 		break
 		
