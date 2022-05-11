@@ -47,11 +47,17 @@ def build_table(user_lat, user_lon, search_range):
 	f.close()
 
 	# Sort by nearest locations 
-	locations_within_range = sorted(locations_within_range, key=itemgetter(3))
+	try:
+		locations_within_range = sorted(locations_within_range, key=itemgetter(3))
+	except IndexError: 
+		# IndexError thrown if no locations were added
+		# This means the city/zipcode entered does not have any food pantry
+		# locations within the selected range
+		return [] 
 	return locations_within_range
 
 
-
+# Function for creating the window displaying the table of results
 def create(user_lat, user_lon, search_range):
 	# Headings for Table
 	headings = ['NAME', 'ADDRESS', 'PHONE NUMBER', 'DISTANCE (MILES)']
@@ -59,6 +65,10 @@ def create(user_lat, user_lon, search_range):
 	# List holding food pantry locations
 	locations = build_table(user_lat, user_lon, search_range)
 	num_of_results = len(locations) # Number of locations near user
+	
+	# If locations is empty, then show empty yable
+	if len(locations) == 0:
+		locations = [["N/A", "N/A", "N/A", "N/A"]]
 
 	food_pantries_table_window_layout = [
 		[sg.Text(f"Search Resulted in {num_of_results} Food Pantry Locations", font="Calibri 25 bold")],
