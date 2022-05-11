@@ -10,10 +10,11 @@ sg.theme('Light Brown 8')
 headings = ['NAME', 'ADDRESS', 'PHONE NUMBER', 'DISTANCE (MILES)']
 
 # Function to create layouts for search options
-def create_search_layout(text, input_key, button_key):
+def create_search_layout(text, sub_text, input_key, input_width, button_key):
 	layout = [
-		[sg.Text(text, font='Calibri 20')],
-		[sg.In(size=(30,2), key=input_key, font='Calibri 18')],
+		[sg.Text(text, font='Calibri 25')],
+		[sg.Text(sub_text, font='Calibri 18 italic')],
+		[sg.In(size=(input_width,2), key=input_key, font='Calibri 18', justification="center")],
 		[sg.Submit(button_text='SEARCH', pad=(3, 10), font='Calibri 20', key=button_key)]]
 
 	return layout
@@ -29,12 +30,11 @@ def find_selected_range(values):
 
 # Function to display popup when search is done with empty field
 def error_popup(message):
-	sg.Popup(message, font="calibri 20 bold", text_color="red")
+	sg.Popup(message, font="Calibri 20 bold", text_color="red")
 
 # Layouts for Search Options
-search_by_address_layout = create_search_layout('Search by Address:', '-ADDRESS-', '-SEARCH_ADDRESS-')
-search_by_city_layout = create_search_layout('Search by City:', '-CITY-', '-SEARCH_CITY-')
-search_by_zipcode_layout =create_search_layout('Search by ZIP:', '-ZIP-', '-SEARCH_ZIP-')
+search_by_city_layout = create_search_layout('Search by City', "(Only Places in NJ)", '-CITY-', 30, '-SEARCH_CITY-')
+search_by_zipcode_layout =create_search_layout('Search by ZIP', "12345 or 12345-6789 or 12345 1234", '-ZIP-', 15, '-SEARCH_ZIP-')
 
 # Layout for Search Range Selection
 choose_range_layout = [
@@ -44,7 +44,7 @@ choose_range_layout = [
 		sg.Radio('20 miles', 'MILES', font='Calibri 15', key='-TWENTYMILES-')]]
 
 # Create the layout for the window
-layout = [[sg.Text('FOOD PANTRY LOCATOR', font='Calibri 40 bold')]] + search_by_address_layout + [[sg.HorizontalSeparator()]] + search_by_city_layout + [[sg.HorizontalSeparator()]] +search_by_zipcode_layout + [[sg.HorizontalSeparator()]] + choose_range_layout
+layout = [[sg.Text('FOOD PANTRY LOCATOR', font='Calibri 40 bold')]] + search_by_city_layout + [[sg.HorizontalSeparator()]] + search_by_zipcode_layout + [[sg.HorizontalSeparator()]] + choose_range_layout
 
 
 # Create the window
