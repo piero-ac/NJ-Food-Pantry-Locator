@@ -55,14 +55,6 @@ while True:
 	# Event: user closes window or click cancel
 	if event == sg.WIN_CLOSED: 
 		break
-	# Event: user searches by address
-	elif event == '-SEARCH_ADDRESS-':
-		address_info = values['-ADDRESS-'].strip()
-		search_range = find_selected_range(values)
-
-		if not address_info:
-			error_popup("ADDRESS FIELD EMPTY")
-			continue
 		
 	# Event: user searches by city
 	elif event == '-SEARCH_CITY-':
