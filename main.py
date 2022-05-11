@@ -100,50 +100,5 @@ while True:
 		# Create window of food pantries within search range
 		food_pantries_table_window.create(user_lat, user_lon, search_range)
 
-	# Event: user clicks Search button 
-	# elif event ==  '-SEARCH-':
-
-	# 	# Create a list containing the input values
-	# 	user_info = [values['-ADDRESS-'], values['-CITY-'], values['-STATE-'], values['-ZIP-']]
-
-	# 	# Check for empty fields
-	# 	empty_fields = addr.empty_fields(user_info)
-	# 	if empty_fields:
-	# 		sg.Popup("One or more fields are empty")
-	# 		continue
-		
-	# 	# Validate the address
-	# 	address = ",".join(user_info)
-	# 	short_address = user_info[1] + user_info[2] + user_info[3]
-
-	# 	# If full address isn't valid, then it will throw AttributeError
-	# 	try:
-	# 		valid_address = addr.validate(address)
-	# 		user_lat, user_lon = addr.get_coordinates(address)
-
-	# 	# In that case, use address as city, state, postal code
-	# 	except AttributeError:
-	# 		valid_address = addr.validate(short_address)
-	# 		user_lat, user_lon = addr.get_coordinates(short_address)
-
-	# 	# Append user's geolocation to user_info
-	# 	user_info.append(user_lat)
-	# 	user_info.append(user_lon)
-
-	# 	# if not valid_address:
-	# 	# 	sg.Popup("You entered an invalid address")
-	# 	# 	continue
-
-	# 	# Determine the search range selected
-	# 	search_range = 0
-	# 	if values['-FIVEMILES-']:
-	# 		search_range = 5
-	# 	elif values['-TENMILES-']:
-	# 		search_range = 10
-	# 	elif values['-TWENTYMILES-']:
-	# 		search_range = 20
-
-	#	food_pantries_table_window.create(user_info, headings, search_range)
-
 
 window.close()
