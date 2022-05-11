@@ -4,11 +4,6 @@ import geopy
 import geocoder
 from geopy.geocoders import Nominatim
 
-# Function to check for empty input fields
-def empty_fields(user_info):
-	if "" in user_info or None in user_info:
-		return True
-	return False
 
 # Function to check for a valid address
 # Returns false if no result could be found
