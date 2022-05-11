@@ -51,5 +51,3 @@ def validate_city(city):
 		return "Invalid"
 
 
-print(validate_city("carteret, NJ"))
-
