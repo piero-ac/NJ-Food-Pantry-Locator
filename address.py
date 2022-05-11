@@ -28,10 +28,11 @@ def validate_ZIPCODE(postal_code):
 
 # Function to see if city exists in NJ
 def validate_city(city):
-	# add the state to ensure, 
-	# returned coordinates is for city in NJ
+	# add the state to ensure returned coordinates is for city in NJ
 	if "NJ" not in city:
 		city += ", NJ"
+
+	city = city.lower() # Turn the city input into lowercase
 
 	# List to hold cities
 	cities = []
@@ -40,10 +41,15 @@ def validate_city(city):
 
 	# Remove newline char for every entry
 	cities = [x.strip() for x in cities]
+	# Turn the cities into lowercase
+	cities = [x.lower() for x in cities]
+
 
 	if city in cities:
 		return city
 	else:
 		return "Invalid"
 
+
+print(validate_city("carteret, NJ"))
 
